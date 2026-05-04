@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JTBD Statement Checker
 
-## Getting Started
+A Jobs-To-Be-Done statement checker. Type or paste a statement (or upload a screenshot of one), and Sipsy the Milkshake reacts with a verdict and explanation drawn from JTBD theory.
 
-First, run the development server:
+Originally built as a Claude artifact, ported to a self-hosted Next.js app so it can be shared publicly.
+
+## Stack
+
+- Next.js 16 (App Router) + TypeScript + Tailwind v4
+- Anthropic Claude API (Sonnet 4.6 for analysis, Haiku 4.5 for image OCR)
+- Hosted on Vercel
+
+## Local development
 
 ```bash
+npm install
+cp .env.example .env.local   # then paste your Anthropic API key
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The `dev` script unsets `ANTHROPIC_API_KEY` and `ANTHROPIC_BASE_URL` from the parent shell before starting Next, because Claude Code sets those env vars and they would otherwise override `.env.local`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Routes
 
-## Learn More
+- `/` — main JTBD checker
+- `/playground` — Sipsy animation playground
+- `/api/analyze` — POST `{ statement }` → `{ verdict, label, issues, explanation, rewrite, school_note }`
+- `/api/extract` — POST `{ base64, mediaType }` → `{ text }`
 
-To learn more about Next.js, take a look at the following resources:
+## Cost / abuse protection
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Anthropic spend cap:** set in the Anthropic console (the real backstop)
+- **Per-IP rate limit:** 10 req/hour, in-memory per serverless instance ([src/lib/rate-limit.ts](src/lib/rate-limit.ts))
+- **Input length cap:** 2000 chars on text, 8 MB on base64 images
+- **Image MIME allowlist:** PNG / JPEG / WebP / GIF only
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The rate limiter is per-instance, so a determined abuser routing across cold-starts could exceed the per-IP cap. The Anthropic spend cap is the hard backstop.
 
-## Deploy on Vercel
+## Reference
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The original single-file React components used in the Claude artifact are preserved in `reference/` (gitignored). The research notes that informed the system prompt are in `research-report.md`.
