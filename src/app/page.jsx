@@ -348,8 +348,8 @@ export default function JTBDChecker() {
     if (!canSubmit) return;
     var text = input.trim();
     var useImage = !text && imageBase64;
-    smoothScrollToY(0, easeOutQuint);
     setLoading(true); setResult(null); setError(null); setShowExamples(false); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null;
+    window.scrollTo({ top: 0, behavior: "smooth" });
     if (useImage) {
       setSubmittedText("Extracting statement..."); setExtracting(true);
       extractTextFromImage(imageBase64, imageMediaType)
@@ -396,7 +396,7 @@ export default function JTBDChecker() {
 
   function handleReset() {
     setInput(""); setResult(null); setError(null); setSubmittedText(""); setShowExamples(true); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null; clearImage();
-    smoothScrollToY(0, easeOutQuint);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function onKey(e) { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit(); }
