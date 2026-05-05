@@ -433,9 +433,8 @@ export default function JTBDChecker() {
           <Milkshake state={sipsyState} size={200} />
           {sipsyLabel}
         </div>
-        <div>
-          {appState === "default" ? (
-            <div>
+        <div style={{ position: "relative" }}>
+          <div style={{ visibility: appState === "default" ? "visible" : "hidden", pointerEvents: appState === "default" ? "auto" : "none" }}>
               <p style={{ fontSize: 18, color: "#1a1a2e", margin: "0 0 24px", lineHeight: 1.6, textAlign: "center", fontWeight: 600 }}>Is your statement a genuine JTBD statement? <br className="desktop-only-break" />Will it make Sipsy the Milkshake happy? Enter it here to find out.</p>
               <div ref={inputRowRef} className="jtbd-input-row" style={{ display: "flex", gap: 16, alignItems: "stretch", marginBottom: 16 }}>
                 <textarea value={input} onChange={function(e) { setInput(e.target.value); }} onFocus={function() { setFocused(true); }} onBlur={function() { setFocused(false); }} onKeyDown={onKey} placeholder="Type or paste a statement..." rows={5} style={{ flex: 1, background: "#f5f6f8", border: focused ? "1px solid #2563eb" : "1px solid #d1d5db", borderRadius: 10, padding: "14px 16px", fontSize: 16, lineHeight: 1.6, color: "#1a1a2e", fontFamily: "inherit", resize: "none", boxSizing: "border-box", boxShadow: focused ? "0 0 0 3px rgba(37,99,235,0.15)" : "none", transition: "border-color 0.2s, box-shadow 0.2s" }} />
@@ -473,9 +472,10 @@ export default function JTBDChecker() {
                   </div>
                 </div>
               ) : null}
-            </div>
-          ) : null}
+          </div>
 
+          {appState !== "default" ? (
+          <div style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
           {(appState === "loading" || appState === "confirming" || appState === "result") ? (
             <div style={{ border: "1px solid " + (c ? c.border : "#bfdbfe"), background: c ? c.bg : "#eff6ff", borderRadius: 12, padding: "24px 28px", display: "flex", flexDirection: "column", alignItems: "center", gap: 12, marginBottom: 24, textAlign: "center", transition: "background 0.8s ease, border-color 0.8s ease" }}>
               <span style={{ fontSize: 28, fontWeight: 700, lineHeight: 1, display: "block", color: c ? c.labelColor : "transparent", opacity: c ? 1 : 0, maxHeight: c ? 40 : 0, overflow: "hidden", transition: "opacity 0.6s ease, color 0.6s ease, max-height 0.5s ease" }}>{c ? c.icon : ""}</span>
@@ -510,6 +510,8 @@ export default function JTBDChecker() {
 
           {error && appState !== "result" ? (
             <div style={{ padding: "14px 18px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, fontSize: 14, color: "#991b1b", marginBottom: 20 }}>{error}</div>
+          ) : null}
+          </div>
           ) : null}
         </div>
       </div>
