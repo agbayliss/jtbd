@@ -364,6 +364,8 @@ export default function JTBDChecker() {
     setTimeout(function() {
       if (!inputRowRef.current) return;
       var rect = inputRowRef.current.getBoundingClientRect();
+      var fullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+      if (fullyVisible) return;
       var startY = window.pageYOffset || document.documentElement.scrollTop;
       var targetY = rect.top + startY;
       var diff = targetY - startY;
