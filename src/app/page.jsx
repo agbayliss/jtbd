@@ -25,9 +25,8 @@ function smoothScrollToY(targetY, ease) {
   var diff = targetY - startY;
   if (Math.abs(diff) < 4) return;
   var duration = 1100;
-  var startTime = null;
+  var startTime = performance.now();
   function step(now) {
-    if (startTime === null) startTime = now;
     var t = Math.min((now - startTime) / duration, 1);
     window.scrollTo(0, startY + diff * easing(t));
     if (t < 1) requestAnimationFrame(step);
