@@ -15,6 +15,21 @@ function lerpArray(a, b, t) {
   return result;
 }
 
+function smoothScrollToY(targetY) {
+  var startY = window.pageYOffset || document.documentElement.scrollTop;
+  var diff = targetY - startY;
+  if (Math.abs(diff) < 4) return;
+  var duration = 1100;
+  var startTime = null;
+  function step(now) {
+    if (startTime === null) startTime = now;
+    var t = Math.min((now - startTime) / duration, 1);
+    window.scrollTo(0, startY + diff * easeInOut(t));
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 function useAnimatedValues(targetValues, duration) {
   var dur = duration || 500;
   var currentRef = useRef(targetValues);
@@ -326,7 +341,7 @@ export default function JTBDChecker() {
     var text = input.trim();
     var useImage = !text && imageBase64;
     setLoading(true); setResult(null); setError(null); setShowExamples(false); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    smoothScrollToY(0);
     if (useImage) {
       setSubmittedText("Extracting statement..."); setExtracting(true);
       extractTextFromImage(imageBase64, imageMediaType)
@@ -366,25 +381,14 @@ export default function JTBDChecker() {
       var rect = inputRowRef.current.getBoundingClientRect();
       var fullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
       if (fullyVisible) return;
-      var startY = window.pageYOffset || document.documentElement.scrollTop;
-      var targetY = rect.top + startY;
-      var diff = targetY - startY;
-      if (Math.abs(diff) < 4) return;
-      var duration = 1100;
-      var startTime = null;
-      function step(now) {
-        if (startTime === null) startTime = now;
-        var t = Math.min((now - startTime) / duration, 1);
-        window.scrollTo(0, startY + diff * easeInOut(t));
-        if (t < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }, 500);
+      var targetY = rect.top + (window.pageYOffset || document.documentElement.scrollTop);
+      smoothScrollToY(targetY);
+    }, 250);
   }
 
   function handleReset() {
     setInput(""); setResult(null); setError(null); setSubmittedText(""); setShowExamples(true); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null; clearImage();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    smoothScrollToY(0);
   }
 
   function onKey(e) { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit(); }
