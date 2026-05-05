@@ -345,8 +345,8 @@ export default function JTBDChecker() {
     if (!canSubmit) return;
     var text = input.trim();
     var useImage = !text && imageBase64;
-    setLoading(true); setResult(null); setError(null); setShowExamples(false); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null;
     smoothScrollToY(0, easeOutCubic);
+    setLoading(true); setResult(null); setError(null); setShowExamples(false); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null;
     if (useImage) {
       setSubmittedText("Extracting statement..."); setExtracting(true);
       extractTextFromImage(imageBase64, imageMediaType)
