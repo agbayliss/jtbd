@@ -270,6 +270,7 @@ export default function JTBDChecker() {
   var _im = useState(null); var imageMediaType = _im[0]; var setImageMediaType = _im[1];
   var _drag = useState(false); var dragging = _drag[0]; var setDragging = _drag[1];
   var fileInputRef = useRef(null);
+  var inputRowRef = useRef(null);
   var _ext = useState(false); var extracting = _ext[0]; var setExtracting = _ext[1];
   var _twd = useState(-1); var twDisplayed = _twd[0]; var setTwDisplayed = _twd[1];
   var twActiveRef = useRef(false);
@@ -358,7 +359,26 @@ export default function JTBDChecker() {
     analyzeStatement(textToEval).then(function(r) { setResult(r); }).catch(function(err) { setError(err && err.message ? err.message : "Something went wrong. Try again."); }).finally(function() { setLoading(false); });
   }
 
-  function handleExample(ex) { setInput(ex); setResult(null); setError(null); }
+  function handleExample(ex) {
+    setInput(ex); setResult(null); setError(null);
+    setTimeout(function() {
+      if (!inputRowRef.current) return;
+      var rect = inputRowRef.current.getBoundingClientRect();
+      var startY = window.pageYOffset || document.documentElement.scrollTop;
+      var targetY = rect.top + startY;
+      var diff = targetY - startY;
+      if (Math.abs(diff) < 4) return;
+      var duration = 1100;
+      var startTime = null;
+      function step(now) {
+        if (startTime === null) startTime = now;
+        var t = Math.min((now - startTime) / duration, 1);
+        window.scrollTo(0, startY + diff * easeInOut(t));
+        if (t < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }, 500);
+  }
 
   function handleReset() {
     setInput(""); setResult(null); setError(null); setSubmittedText(""); setShowExamples(true); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null; clearImage();
@@ -392,7 +412,7 @@ export default function JTBDChecker() {
   return (
     <>
     <div style={{ flex: 1, background: "#ffffff", color: "#1a1a2e", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif", padding: "40px 24px" }}>
-      <style dangerouslySetInnerHTML={{ __html: "@keyframes sipsyBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } } @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } } *:focus { outline: 2px solid #2563eb !important; outline-offset: 2px; } *:focus:not(:focus-visible) { outline: none !important; } *:focus-visible { outline: 2px solid #2563eb !important; outline-offset: 2px; } @media (max-width: 600px) { .jtbd-input-row { flex-direction: column; } .jtbd-input-row > * { flex: none !important; width: 100% !important; } .jtbd-or { justify-content: center; }  }" }} />
+      <style dangerouslySetInnerHTML={{ __html: "@keyframes sipsyBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } } @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } } *:focus { outline: 2px solid #2563eb !important; outline-offset: 2px; } *:focus:not(:focus-visible) { outline: none !important; } *:focus-visible { outline: 2px solid #2563eb !important; outline-offset: 2px; } @media (max-width: 600px) { .jtbd-input-row { flex-direction: column; } .jtbd-input-row > * { flex: none !important; width: 100% !important; } .jtbd-or { justify-content: center; } .desktop-only-break { display: none; } }" }} />
       <div style={{ maxWidth: 700, margin: "0 auto", minHeight: "80vh" }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, textAlign: "center", margin: "0 0 28px", letterSpacing: "-0.02em" }}>Jobs-To-Be-Done Statement Checker</h1>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 28 }}>
@@ -402,8 +422,8 @@ export default function JTBDChecker() {
         <div>
           {appState === "default" ? (
             <div>
-              <p style={{ fontSize: 18, color: "#1a1a2e", margin: "0 0 24px", lineHeight: 1.6, textAlign: "center", fontWeight: 600 }}>Is your statement a genuine JTBD statement?<br />Will it make Sipsy the Milkshake happy? Enter it here to find out.</p>
-              <div className="jtbd-input-row" style={{ display: "flex", gap: 16, alignItems: "stretch", marginBottom: 16 }}>
+              <p style={{ fontSize: 18, color: "#1a1a2e", margin: "0 0 24px", lineHeight: 1.6, textAlign: "center", fontWeight: 600 }}>Is your statement a genuine JTBD statement? <br className="desktop-only-break" />Will it make Sipsy the Milkshake happy? Enter it here to find out.</p>
+              <div ref={inputRowRef} className="jtbd-input-row" style={{ display: "flex", gap: 16, alignItems: "stretch", marginBottom: 16 }}>
                 <textarea value={input} onChange={function(e) { setInput(e.target.value); }} onFocus={function() { setFocused(true); }} onBlur={function() { setFocused(false); }} onKeyDown={onKey} placeholder="Type or paste a statement..." rows={5} style={{ flex: 1, background: "#f5f6f8", border: focused ? "1px solid #2563eb" : "1px solid #d1d5db", borderRadius: 10, padding: "14px 16px", fontSize: 16, lineHeight: 1.6, color: "#1a1a2e", fontFamily: "inherit", resize: "none", boxSizing: "border-box", boxShadow: focused ? "0 0 0 3px rgba(37,99,235,0.15)" : "none", transition: "border-color 0.2s, box-shadow 0.2s" }} />
                 <div className="jtbd-or" style={{ display: "flex", alignItems: "center", color: "#6b7084", fontSize: 14, fontWeight: 500, flexShrink: 0 }}>or</div>
                 <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" style={{ display: "none" }} onChange={function(e) { if (e.target.files && e.target.files[0]) processFile(e.target.files[0]); }} />
@@ -429,7 +449,12 @@ export default function JTBDChecker() {
                   <div style={{ fontSize: 18, color: "#1a1a2e", marginBottom: 12, lineHeight: 1.6, textAlign: "center", fontWeight: 600 }}>Try an example:</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                     {EXAMPLES.map(function(ex, i) {
-                      return (<button key={i} onClick={function() { handleExample(ex); }} onMouseEnter={function() { setHovered(i); }} onMouseLeave={function() { setHovered(-1); }} style={{ background: hovered === i ? "#eef0f3" : "#f5f6f8", border: "1px solid #e2e4e9", borderRadius: 8, padding: "10px 14px", fontSize: 16, color: hovered === i ? "#1a1a2e" : "#525566", textAlign: "left", cursor: "pointer", fontFamily: "inherit", lineHeight: 1.45, transition: "background 0.15s, color 0.15s" }}>{"“" + ex + "”"}</button>);
+                      var isSelected = input.trim() === ex.trim() && input.trim().length > 0;
+                      var bg = isSelected ? "#eff6ff" : (hovered === i ? "#eef0f3" : "#f5f6f8");
+                      var borderColor = isSelected ? "#2563eb" : "#e2e4e9";
+                      var textColor = isSelected ? "#1e40af" : (hovered === i ? "#1a1a2e" : "#525566");
+                      var ring = isSelected ? "0 0 0 2px rgba(37,99,235,0.18)" : "none";
+                      return (<button key={i} onClick={function() { handleExample(ex); }} onMouseEnter={function() { setHovered(i); }} onMouseLeave={function() { setHovered(-1); }} style={{ background: bg, border: "1px solid " + borderColor, borderRadius: 8, padding: "10px 14px", fontSize: 16, color: textColor, textAlign: "left", cursor: "pointer", fontFamily: "inherit", lineHeight: 1.45, transition: "background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s", boxShadow: ring }}>{"“" + ex + "”"}</button>);
                     })}
                   </div>
                 </div>
