@@ -390,8 +390,9 @@ export default function JTBDChecker() {
   var c = cardReady ? cFull : null;
 
   return (
-    <div style={{ minHeight: "120vh", background: "#ffffff", color: "#1a1a2e", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif", padding: "40px 24px" }}>
-      <style dangerouslySetInnerHTML={{ __html: "@keyframes sipsyBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } } @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } } *:focus { outline: 2px solid #2563eb !important; outline-offset: 2px; } *:focus:not(:focus-visible) { outline: none !important; } *:focus-visible { outline: 2px solid #2563eb !important; outline-offset: 2px; }" }} />
+    <>
+    <div style={{ flex: 1, background: "#ffffff", color: "#1a1a2e", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif", padding: "40px 24px" }}>
+      <style dangerouslySetInnerHTML={{ __html: "@keyframes sipsyBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } } @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } } *:focus { outline: 2px solid #2563eb !important; outline-offset: 2px; } *:focus:not(:focus-visible) { outline: none !important; } *:focus-visible { outline: 2px solid #2563eb !important; outline-offset: 2px; } @media (max-width: 600px) { .jtbd-input-row { flex-direction: column; } .jtbd-input-row > * { flex: none !important; width: 100% !important; } .jtbd-or { justify-content: center; }  }" }} />
       <div style={{ maxWidth: 700, margin: "0 auto", minHeight: "80vh" }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, textAlign: "center", margin: "0 0 28px", letterSpacing: "-0.02em" }}>Jobs-To-Be-Done Statement Checker</h1>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 28 }}>
@@ -402,9 +403,9 @@ export default function JTBDChecker() {
           {appState === "default" ? (
             <div>
               <p style={{ fontSize: 18, color: "#1a1a2e", margin: "0 0 24px", lineHeight: 1.6, textAlign: "center", fontWeight: 600 }}>Is your statement a genuine JTBD statement?<br />Will it make Sipsy the Milkshake happy? Enter it here to find out.</p>
-              <div style={{ display: "flex", gap: 16, alignItems: "stretch", marginBottom: 16 }}>
+              <div className="jtbd-input-row" style={{ display: "flex", gap: 16, alignItems: "stretch", marginBottom: 16 }}>
                 <textarea value={input} onChange={function(e) { setInput(e.target.value); }} onFocus={function() { setFocused(true); }} onBlur={function() { setFocused(false); }} onKeyDown={onKey} placeholder="Type or paste a statement..." rows={5} style={{ flex: 1, background: "#f5f6f8", border: focused ? "1px solid #2563eb" : "1px solid #d1d5db", borderRadius: 10, padding: "14px 16px", fontSize: 16, lineHeight: 1.6, color: "#1a1a2e", fontFamily: "inherit", resize: "none", boxSizing: "border-box", boxShadow: focused ? "0 0 0 3px rgba(37,99,235,0.15)" : "none", transition: "border-color 0.2s, box-shadow 0.2s" }} />
-                <div style={{ display: "flex", alignItems: "center", color: "#6b7084", fontSize: 14, fontWeight: 500, flexShrink: 0 }}>or</div>
+                <div className="jtbd-or" style={{ display: "flex", alignItems: "center", color: "#6b7084", fontSize: 14, fontWeight: 500, flexShrink: 0 }}>or</div>
                 <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif" style={{ display: "none" }} onChange={function(e) { if (e.target.files && e.target.files[0]) processFile(e.target.files[0]); }} />
                 {imagePreview ? (
                   <div style={{ flex: 1, borderRadius: 10, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, border: "1px solid #d1d5db", background: "#fafafa", padding: 8, position: "relative", overflow: "hidden" }}>
@@ -473,12 +474,13 @@ export default function JTBDChecker() {
           ) : null}
         </div>
       </div>
-      <div style={{ background: "#f5f6f8", borderTop: "1px solid #d1d5db", marginTop: 60, padding: "43px 24px" }}>
-        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-          <p style={{ fontSize: 16, color: "#525566", margin: "0 0 16px", lineHeight: 1.5 }}>{"If you want to play with the milkshake animations, "}<a href="/playground" style={{ color: "#2563eb", textDecoration: "underline", textUnderlineOffset: 2 }}>click here</a>.</p>
-          <p style={{ fontSize: 16, color: "#525566", margin: "20px 0 0", lineHeight: 1.5 }}>{"And if you want to know why a milkshake is the mascot for this tool, "}<a href="https://www.youtube.com/watch?v=Stc0beAxavY" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "underline", textUnderlineOffset: 2 }}>watch this video<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", marginLeft: 3, verticalAlign: "middle", position: "relative", top: -1 }}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg></a>.</p>
-        </div>
+    </div>
+    <div style={{ background: "#f5f6f8", borderTop: "1px solid #d1d5db", padding: "43px 24px" }}>
+      <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
+        <p style={{ fontSize: 16, color: "#525566", margin: "0 0 16px", lineHeight: 1.5 }}>{"If you want to play with the milkshake animations, "}<a href="/playground" style={{ color: "#2563eb", textDecoration: "underline", textUnderlineOffset: 2 }}>click here</a>.</p>
+        <p style={{ fontSize: 16, color: "#525566", margin: "20px 0 0", lineHeight: 1.5 }}>{"And if you want to know why a milkshake is the mascot for this tool, "}<a href="https://www.youtube.com/watch?v=Stc0beAxavY" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "underline", textUnderlineOffset: 2 }}>watch this video<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: "inline-block", marginLeft: 3, verticalAlign: "middle", position: "relative", top: -1 }}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg></a>.</p>
       </div>
     </div>
+    </>
   );
 }

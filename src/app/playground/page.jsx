@@ -189,14 +189,15 @@ export default function MilkshakeDemo() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif", padding: "48px 24px" }}>
+      <style dangerouslySetInnerHTML={{ __html: "@media (max-width: 600px) { .playground-chip-row { flex-wrap: wrap; gap: 8px; } .playground-chip { flex: 1 1 calc(50% - 4px) !important; } }" }} />
       <div style={{ maxWidth: 500, margin: "0 auto", textAlign: "center" }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, margin: "0 0 8px", letterSpacing: "-0.02em", color: "#1a1a2e" }}>Play with Sipsy</h1>
         <p style={{ fontSize: 15, color: "#525566", margin: "0 0 32px" }}>Click between states to watch Sipsy the Milkshake react.</p>
-        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 32 }}>
+        <div className="playground-chip-row" style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 32 }}>
           {states.map(function(st) {
             var isActive = state === st.key;
             return (
-              <button key={st.key} onClick={function() { setState(st.key); }} onMouseEnter={function() { setHovered(st.key); }} onMouseLeave={function() { setHovered(""); }}
+              <button key={st.key} className="playground-chip" onClick={function() { setState(st.key); }} onMouseEnter={function() { setHovered(st.key); }} onMouseLeave={function() { setHovered(""); }}
                 style={{ padding: "8px 18px", borderRadius: 100, border: isActive ? "2px solid #1a1a2e" : "1px solid #d1d5db", background: isActive ? "#1a1a2e" : (hovered === st.key ? "#f5f6f8" : "#ffffff"), color: isActive ? "#ffffff" : "#525566", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                 {st.label}
               </button>
@@ -212,7 +213,8 @@ export default function MilkshakeDemo() {
         </div>
         <div style={{ marginTop: 40 }}>
           <a href="/" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px", borderRadius: 8, border: "1px solid #d1d5db", background: "#ffffff", color: "#525566", fontSize: 14, fontWeight: 600, textDecoration: "none", fontFamily: "inherit", cursor: "pointer" }}>
-            Open JTBD Checker
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            Back to JTBD Checker
           </a>
         </div>
       </div>
