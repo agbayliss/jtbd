@@ -15,7 +15,12 @@ function lerpArray(a, b, t) {
   return result;
 }
 
-function smoothScrollToY(targetY) {
+function easeOutCubic(t) {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function smoothScrollToY(targetY, ease) {
+  var easing = ease || easeInOut;
   var startY = window.pageYOffset || document.documentElement.scrollTop;
   var diff = targetY - startY;
   if (Math.abs(diff) < 4) return;
@@ -24,7 +29,7 @@ function smoothScrollToY(targetY) {
   function step(now) {
     if (startTime === null) startTime = now;
     var t = Math.min((now - startTime) / duration, 1);
-    window.scrollTo(0, startY + diff * easeInOut(t));
+    window.scrollTo(0, startY + diff * easing(t));
     if (t < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -341,7 +346,7 @@ export default function JTBDChecker() {
     var text = input.trim();
     var useImage = !text && imageBase64;
     setLoading(true); setResult(null); setError(null); setShowExamples(false); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null;
-    smoothScrollToY(0);
+    smoothScrollToY(0, easeOutCubic);
     if (useImage) {
       setSubmittedText("Extracting statement..."); setExtracting(true);
       extractTextFromImage(imageBase64, imageMediaType)
@@ -388,7 +393,7 @@ export default function JTBDChecker() {
 
   function handleReset() {
     setInput(""); setResult(null); setError(null); setSubmittedText(""); setShowExamples(true); setRevealStage(-1); setExtracting(false); setTwDisplayed(-1); setConfirming(false); setIsEditing(false); twActiveRef.current = false; resultRef.current = null; clearImage();
-    smoothScrollToY(0);
+    smoothScrollToY(0, easeOutCubic);
   }
 
   function onKey(e) { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit(); }
